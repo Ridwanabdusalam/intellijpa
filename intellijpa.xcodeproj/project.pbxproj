@@ -27,11 +27,28 @@
 		96A7EA4F2DDD45F200D57984 /* intellijpa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = intellijpa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A7EA5F2DDD45F500D57984 /* intellijpaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = intellijpaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96A7EA692DDD45F500D57984 /* intellijpaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = intellijpaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96A7EA7C2DDD45F500D57985 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		96A7EA7E2DDD45F500D57987 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = intellijpa/Info.plist; sourceTree = "<group>"; };
+		96A7EA7F2DDD45F500D57988 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioRecorder.swift; path = intellijpa/AudioRecorder.swift; sourceTree = "<group>"; };
+		96A7EA812DDD45F500D57990 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = intellijpa/ContentView.swift; sourceTree = "<group>"; };
+		96A7EA822DDD45F500D57991 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Item.swift; path = intellijpa/Item.swift; sourceTree = "<group>"; };
+		96A7EA832DDD45F500D57992 /* intellijpaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = intellijpaApp.swift; path = intellijpa/intellijpaApp.swift; sourceTree = "<group>"; };
+		96A7EA872DDD45F500D57996 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = intellijpa/Assets.xcassets; sourceTree = "<group>"; };
+		96A7EA882DDD45F500D57997 /* intellijpa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = intellijpa.entitlements; path = intellijpa/intellijpa.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		96A7EA512DDD45F200D57984 /* intellijpa */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
+			isa = PBXGroup;
+			children = (
+				96A7EA7F2DDD45F500D57988 /* AudioRecorder.swift */,
+				96A7EA7E2DDD45F500D57987 /* Info.plist */,
+				96A7EA812DDD45F500D57990 /* ContentView.swift */,
+				96A7EA822DDD45F500D57991 /* Item.swift */,
+				96A7EA832DDD45F500D57992 /* intellijpaApp.swift */,
+				96A7EA872DDD45F500D57996 /* Assets.xcassets */,
+				96A7EA882DDD45F500D57997 /* intellijpa.entitlements */,
+			);
 			path = intellijpa;
 			sourceTree = "<group>";
 		};
@@ -52,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96A7EA7D2DDD45F500D57986 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,6 +97,7 @@
 				96A7EA622DDD45F500D57984 /* intellijpaTests */,
 				96A7EA6C2DDD45F500D57984 /* intellijpaUITests */,
 				96A7EA502DDD45F200D57984 /* Products */,
+				96A7EA7C2DDD45F500D57985 /* AVFoundation.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,6 +111,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		96A7EA7D2DDD45F500D57986 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 96A7EA7C2DDD45F500D57985 /* AVFoundation.framework */; };
+		96A7EA802DDD45F500D57989 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A7EA7F2DDD45F500D57988 /* AudioRecorder.swift */; };
+		96A7EA842DDD45F500D57993 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A7EA812DDD45F500D57990 /* ContentView.swift */; };
+		96A7EA852DDD45F500D57994 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A7EA822DDD45F500D57991 /* Item.swift */; };
+		96A7EA862DDD45F500D57995 /* intellijpaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A7EA832DDD45F500D57992 /* intellijpaApp.swift */; };
+		96A7EA892DDD45F500D57998 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96A7EA872DDD45F500D57996 /* Assets.xcassets */; };
+		96A7EA8A2DDD45F500D57999 /* intellijpa.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 96A7EA882DDD45F500D57997 /* intellijpa.entitlements */; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -212,6 +238,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96A7EA892DDD45F500D57998 /* Assets.xcassets in Resources */,
+				96A7EA8A2DDD45F500D57999 /* intellijpa.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +264,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96A7EA802DDD45F500D57989 /* AudioRecorder.swift in Sources */,
+				96A7EA842DDD45F500D57993 /* ContentView.swift in Sources */,
+				96A7EA852DDD45F500D57994 /* Item.swift in Sources */,
+				96A7EA862DDD45F500D57995 /* intellijpaApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +430,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = intellijpa/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -424,6 +457,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = intellijpa/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

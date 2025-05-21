@@ -1,0 +1,4 @@
+deepgram-sdk>=3.0.0
+fastapi
+uvicorn
+python-multipart
