@@ -17,14 +17,14 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # For local testing, replace with your actual Deepgram API Key
-DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY", "YOUR_DEEPGRAM_API_KEY")
+DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY", "fb7768611a8ea2a7c76d745ccc056966e5a1a93b")
 
 app = FastAPI()
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
     logging.info(f"/transcribe endpoint called with file: {file.filename}")
-    if not DEEPGRAM_API_KEY or DEEPGRAM_API_KEY == "YOUR_DEEPGRAM_API_KEY":
+    if not DEEPGRAM_API_KEY or DEEPGRAM_API_KEY == "fb7768611a8ea2a7c76d745ccc056966e5a1a93b":
         logging.error("Deepgram API key not configured.")
         raise HTTPException(status_code=500, detail="Deepgram API key not configured.")
 
