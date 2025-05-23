@@ -73,7 +73,7 @@ class DeepgramService: ObservableObject {
     @Published var error: String?
     
     // Replace with your Deepgram API key
-    private let apiKey = "YOUR_DEEPGRAM_API_KEY"
+    private let apiKey = "3f714d15936e6f60fa44dceed81cf7d42b15ee38" 
     private let baseURL = "https://api.deepgram.com/v1/listen"
     
     private var cancellables = Set<AnyCancellable>()
