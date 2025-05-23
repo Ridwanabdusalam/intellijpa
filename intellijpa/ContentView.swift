@@ -1,85 +1,172 @@
-//
-//  ContentView.swift
-//  intellijpa
-//
-//  Created by Ridwan Abdusalam on 20/05/2025.
-//
-
 import SwiftUI
-// import SwiftData // SwiftData is not used in this modified version
 
 struct ContentView: View {
-    // @Environment(\.modelContext) private var modelContext // SwiftData not used
-    // @Query private var items: [Item] // SwiftData not used
+    @StateObject private var audioRecorder = AudioRecorder()
+    @StateObject private var deepgramService = DeepgramService()
+    @State private var showingPermissionAlert = false
+    @State private var permissionDenied = false
     
-    @State private var transcribedText: String = "Press record to transcribe..."
-    private var audioRecorder = AudioRecorder()
-
     var body: some View {
-        NavigationView { // Using NavigationView for a title bar
-            VStack {
-                Text(transcribedText)
+        VStack(spacing: 20) {
+            // Title
+            Text("Voice Assistant")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            // Recording Status
+            HStack {
+                Circle()
+                    .fill(audioRecorder.isRecording ? Color.red : Color.gray)
+                    .frame(width: 12, height: 12)
+                Text(audioRecorder.isRecording ? "Recording..." : "Ready")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+            
+            // Record Button
+            Button(action: toggleRecording) {
+                Image(systemName: audioRecorder.isRecording ? "stop.circle.fill" : "mic.circle.fill")
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .foregroundColor(audioRecorder.isRecording ? .red : .blue)
+            }
+            .buttonStyle(.plain)
+            .disabled(permissionDenied || deepgramService.isProcessing)
+            
+            // Error Messages
+            if !audioRecorder.errorMessage.isEmpty {
+                Text(audioRecorder.errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+            
+            if let error = deepgramService.error {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+            
+            if permissionDenied {
+                Text("Microphone access denied. Please enable in System Preferences.")
+                    .foregroundColor(.orange)
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+            }
+            
+            // Processing Indicator
+            if deepgramService.isProcessing {
+                ProgressView("Processing audio...")
                     .padding()
-                    .lineLimit(nil) // Allow multiple lines
-                    .frame(minHeight: 100) // Give some space for text
-
-                Button(action: {
-                    self.transcribedText = "Recording..."
-                    audioRecorder.startRecording { transcriptionResult in
-                        DispatchQueue.main.async {
-                            if let result = transcriptionResult {
-                                if result.isEmpty {
-                                    // Case where backend returned an empty transcription string,
-                                    // implying no speech was detected or the audio was silent.
-                                    self.transcribedText = "No speech detected in the audio."
-                                } else if result.starts(with: "Microphone permission denied") ||
-                                          result.starts(with: "Audio engine could not be initialized") ||
-                                          result.starts(with: "Audio format conversion failed") ||
-                                          result.starts(with: "Failed to create audio file") ||
-                                          result.starts(with: "Audio recording setup failed") ||
-                                          result.starts(with: "Failed to process recorded audio file") ||
-                                          result.starts(with: "Internal error: Invalid backend URL") ||
-                                          result.starts(with: "Network error") ||
-                                          result.starts(with: "Server error") ||
-                                          result.starts(with: "Backend error") {
-                                    // Specific error messages passed from AudioRecorder
-                                    self.transcribedText = "Error: \(result)"
+            }
+            
+            // Results Section
+            if !deepgramService.speakerTurns.isEmpty {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Transcript with Speaker Diarization")
+                        .font(.headline)
+                    
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(Array(deepgramService.speakerTurns.enumerated()), id: \.offset) { index, turn in
+                                HStack(alignment: .top) {
+                                    Text("Speaker \(turn.speaker + 1):")
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(speakerColor(for: turn.speaker))
+                                        .frame(width: 80, alignment: .leading)
+                                    
+                                    Text(turn.text)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    Text(formatTime(turn.startTime))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
                                 }
-                                else {
-                                    // Successful transcription
-                                    self.transcribedText = result
-                                }
-                            } else {
-                                // This case implies a more fundamental issue where transcriptionResult is nil,
-                                // which our improved AudioRecorder tries to avoid by passing specific error strings.
-                                // However, as a fallback:
-                                self.transcribedText = "Transcription failed. An unexpected error occurred."
+                                .padding(.horizontal)
+                                .padding(.vertical, 4)
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(8)
                             }
                         }
                     }
-                }) {
-                    Label("Record Audio", systemImage: "mic.fill")
+                    .frame(maxHeight: 300)
+                }
+                .padding()
+                .background(Color.gray.opacity(0.05))
+                .cornerRadius(10)
+            } else if !deepgramService.transcription.isEmpty {
+                // Fallback to simple transcription if no speaker turns
+                VStack(alignment: .leading) {
+                    Text("Transcription")
+                        .font(.headline)
+                    Text(deepgramService.transcription)
                         .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
                 }
             }
-            .navigationTitle("Audio Transcriber") // Sets a title for the view
+            
+            Spacer()
+        }
+        .padding()
+        .frame(minWidth: 500, minHeight: 600)
+        .onAppear {
+            checkMicrophonePermission()
+        }
+        .alert("Microphone Permission Required", isPresented: $showingPermissionAlert) {
+            Button("OK") {
+                showingPermissionAlert = false
+            }
+        } message: {
+            Text("Please grant microphone access to use the voice assistant.")
+        }
+        .onChange(of: audioRecorder.audioData) { newData in
+            // When recording stops and we have audio data
+            if !audioRecorder.isRecording && !newData.isEmpty {
+                deepgramService.transcribeAudio(newData)
+            }
         }
     }
+    
+    private func toggleRecording() {
+        if audioRecorder.isRecording {
+            audioRecorder.stopRecording()
+        } else {
+            checkMicrophonePermission { granted in
+                if granted {
+                    audioRecorder.startRecording()
+                }
+            }
+        }
+    }
+    
+    private func checkMicrophonePermission(completion: ((Bool) -> Void)? = nil) {
+        audioRecorder.requestMicrophonePermission { granted in
+            if granted {
+                permissionDenied = false
+                completion?(true)
+            } else {
+                permissionDenied = true
+                showingPermissionAlert = true
+                completion?(false)
+            }
+        }
+    }
+    
+    private func speakerColor(for speaker: Int) -> Color {
+        let colors: [Color] = [.blue, .green, .orange, .purple, .pink]
+        return colors[speaker % colors.count]
+    }
+    
+    private func formatTime(_ seconds: Double) -> String {
+        let minutes = Int(seconds) / 60
+        let remainingSeconds = Int(seconds) % 60
+        return String(format: "%02d:%02d", minutes, remainingSeconds)
+    }
+}
 
-    // private func addItem() { // SwiftData addItem removed
-    //     withAnimation {
-    //         let newItem = Item(timestamp: Date())
-    //         modelContext.insert(newItem)
-    //     }
-    // }
-
-    // private func deleteItems(offsets: IndexSet) { // SwiftData deleteItems removed
-    //     withAnimation {
-    //         for index in offsets {
-    //             modelContext.delete(items[index])
-    //         }
-    //     }
-    // }
+#Preview {
+    ContentView()
 }
 
 #Preview {
